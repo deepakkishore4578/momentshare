@@ -1,11 +1,13 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Load environment variables first
+dotenv.config();
 
 import express from 'express';
 import type { Request, Response } from 'express';
 import apiRoutes from './routes/api';
 import { runCleanupJob } from './core/storage';
-import * as cors from 'cors'; // CRITICAL FIX: Import as *
+
+// CRITICAL FIX: Use require() to guarantee Express gets a middleware function
+const cors = require('cors') as express.RequestHandler; 
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -23,8 +25,8 @@ const corsOptions = {
 };
 
 // --- Middleware ---
-// CRITICAL FIX: Use .default to call the function
-app.use(cors.default(corsOptions)); 
+// CRITICAL FIX: The cors function is used here
+app.use(cors(corsOptions)); 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -39,5 +41,7 @@ app.use('/api', apiRoutes);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is listening on http://localhost:${PORT}`);
-  // ... (rest of startup logs and job schedule)
+  console.log(`Storage mode: ${process.env.STORAGE_TYPE}`);
+  setInterval(runCleanupJob, 60 * 1000); 
+  console.log('File cleanup job scheduled to run every 60 seconds.');
 });
