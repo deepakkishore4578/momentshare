@@ -27,7 +27,7 @@ function UploadResult({ code, error }: { code: string | null; error: string | nu
 export default function UploadForm() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [retention, setRetention] = useState<string>('10');
-  
+
   // 1. Add state for loading, code, and errors
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [uploadCode, setUploadCode] = useState<string | null>(null);
@@ -59,10 +59,14 @@ export default function UploadForm() {
 
     try {
       // 4. POST the data to your backend
-      const response = await fetch('http://localhost:8080/api/upload', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+      // 4. POST the data to your backend
+      const response = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
+
 
       if (!response.ok) {
         // Handle server errors (like 400, 500)
@@ -122,11 +126,10 @@ export default function UploadForm() {
                 type="button"
                 key={time}
                 onClick={() => setRetention(value)}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  retention === value
+                className={`px-4 py-2 rounded-md text-sm font-medium ${retention === value
                     ? 'bg-gray-800 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                  }`}
               >
                 {time}
               </button>

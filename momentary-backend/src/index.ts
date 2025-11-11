@@ -11,7 +11,14 @@ const PORT = process.env.PORT || 8080;
 
 // --- Middleware ---
 // 2. Add middleware to parse JSON request bodies
-app.use(cors());
+const allowedOrigins = [
+  "https://momentshare.vercel.app", // Your primary domain
+  "http://localhost:5173" // Your local dev environment
+  // NOTE: Render will also accept environment variables for other domains.
+  // For simplicity, we just add the production URL and rely on Render's
+  // built-in handling for the other branches/previews.
+];
+app.use(allowedOrigins);
 app.use(express.json());
 // 3. Add middleware to parse URL-encoded form data (like 'retention')
 app.use(express.urlencoded({ extended: true }));
