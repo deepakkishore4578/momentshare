@@ -18,7 +18,9 @@ const allowedOrigins = [
   // For simplicity, we just add the production URL and rely on Render's
   // built-in handling for the other branches/previews.
 ];
-app.use(allowedOrigins);
+app.use(cors({
+  origin: allowedOrigins // <--- If allowedOrigins is undefined, this can fail
+}));
 app.use(express.json());
 // 3. Add middleware to parse URL-encoded form data (like 'retention')
 app.use(express.urlencoded({ extended: true }));
