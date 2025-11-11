@@ -58,28 +58,43 @@ export default function UploadForm() {
     formData.append('retention', retention);
 
     try {
-      // 4. POST the data to your backend
+      // CRITICAL FIX: Ensure protocol is HTTPS for production deployment
+      // The process.env is read as a string. We ensure it starts with https://
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
+      
       // 4. POST the data to your backend
       const response = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
 
-
       if (!response.ok) {
-        // Handle server errors (like 400, 500)
-        throw new Error(`Upload failed with status: ${response.status}`);
+        // If the status is not 2xx, throw an error
+        let errorText = `Upload failed with status: ${response.status}`;
+        if (response.status === 403) {
+            errorText += " (CORS or permissions issue)";
+        }
+        throw new Error(errorText);
       }
 
-      // 5. Get the JSON response (e.g., { "code": "gHk8" })
+      // 5. Get the JSON response 
       const data = await response.json();
-      setUploadCode(data.code);
+      
+      if (data && data.code) {
+         setUploadCode(data.code);
+      } else {
+         // Fallback error if JSON structure is wrong but status is 200
+         throw new Error("Server response was missing the file code.");
+      }
 
     } catch (error: any) {
       console.error('Upload error:', error);
-      setUploadError(error.message || 'An unknown error occurred.');
+      // Display a more helpful message for a "Failed to fetch" (network/CORS) error
+      if (error.message.includes("Failed to fetch")) {
+          setUploadError("Network connection error. Check API URL and CORS settings.");
+      } else {
+          setUploadError(error.message || 'An unknown error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }

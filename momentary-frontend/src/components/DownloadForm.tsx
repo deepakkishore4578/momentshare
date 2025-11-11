@@ -14,11 +14,12 @@ export default function DownloadForm() {
       return;
     }
 
-    // This is the simplest way to trigger a file download.
-    // The browser will make a GET request to this URL.
-    // If the file exists, the backend will send it.
-    // If not, the browser will likely show a "Not Found" page.
-    window.location.href = `http://localhost:8080/api/download/${code}`;
+    // CRITICAL FIX: Ensure the API_URL is loaded from the environment variable (Vercel)
+    // The fallback is necessary for local testing, but Vercel uses the ENV value.
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+    // Update window.location.href to use the dynamic API_URL
+    window.location.href = `${API_URL}/api/download/${code}`;
 
     // Clear the input field after submission
     setCode('');
