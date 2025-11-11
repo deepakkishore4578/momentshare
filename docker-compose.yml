@@ -1,0 +1,19 @@
+services:
+  # This is the name of our service
+  backend:
+    # Tell Docker Compose to build the image from the 'momentary-backend' folder
+    build: ./momentary-backend
+    ports:
+      # Map port 8080 on your machine to port 8080 inside the container
+      - "8080:8080"
+    volumes:
+      # This creates a 'persistent' volume for local storage
+      # Files in 'uploads' will survive container restarts
+      - momentary-uploads:/app/uploads
+    # This tells the container to load the .env file from this path
+    env_file:
+      - ./momentary-backend/.env
+
+# Define the named volume
+volumes:
+  momentary-uploads:
