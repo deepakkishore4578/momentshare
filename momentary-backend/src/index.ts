@@ -1,21 +1,19 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config(); // Load environment variables first
 
 import express from 'express';
 import type { Request, Response } from 'express';
 import apiRoutes from './routes/api';
 import { runCleanupJob } from './core/storage';
-
-// CRITICAL FIX: Use require() to guarantee Express gets a middleware function
-const cors = require('cors') as express.RequestHandler; 
+import cors from 'cors'; // <-- Use this standard import
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // --- Define the CORS Configuration Object ---
 const allowedOrigins = [
-  "https://momentshare.vercel.app", // Your Vercel domain
-  "http://localhost:5173" 
+  "https://momentshare.vercel.app", // Your primary domain
+  "http://localhost:5173" // Your local dev environment
 ];
 
 const corsOptions = {
@@ -25,7 +23,7 @@ const corsOptions = {
 };
 
 // --- Middleware ---
-// CRITICAL FIX: The cors function is used here
+// CRITICAL: Use the standard cors import and options object
 app.use(cors(corsOptions)); 
 
 app.use(express.json());
