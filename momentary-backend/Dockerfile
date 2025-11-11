@@ -22,4 +22,4 @@ EXPOSE 8080
 
 # 8. The command to run when the container starts
 # We run the compiled JavaScript file
-CMD [ "node", "dist/index.js" ]
+CMD [ "npm", "start" ]
