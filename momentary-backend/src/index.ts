@@ -1,29 +1,27 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Load environment variables first
+dotenv.config(); 
 
 import express from 'express';
 import type { Request, Response } from 'express';
 import apiRoutes from './routes/api';
 import { runCleanupJob } from './core/storage';
-import cors from 'cors'; // <-- Use this standard import
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// --- Define the CORS Configuration Object ---
-const allowedOrigins = [
-  "https://momentshare.vercel.app", // Your primary domain
-  "http://localhost:5173" // Your local dev environment
-];
+// CRITICAL FIX: Define the Vercel URL directly as the allowed origin.
+// REPLACE "https://momentshare.vercel.app" with YOUR exact Vercel domain.
+const VERCEL_FRONTEND_URL = "https://momentshare.vercel.app"; 
 
 const corsOptions = {
-    origin: allowedOrigins,
+    origin: VERCEL_FRONTEND_URL, // Pass the single string here
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE", 
     optionsSuccessStatus: 204
 };
 
 // --- Middleware ---
-// CRITICAL: Use the standard cors import and options object
+// Express now receives a clean cors function call with a single string option.
 app.use(cors(corsOptions)); 
 
 app.use(express.json());
